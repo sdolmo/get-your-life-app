@@ -4,15 +4,22 @@
 //   results.appendChild(document.createTextNode(text));
 // }
 
+$(document).ready($.Mustache.add('string-template', '<div class="item"><h2>{{title}}</h2><iframe class="video w100" width="640" height="360" src="//www.youtube.com/embed/{{videoid}}" frameborder="0" allowfullscreen></iframe></div>'));
+
+function render(data) {
+  var  tpl = $.Mustache.render("string-template", data);
+  $("#results").append(tpl);
+}
+
 function showResponse(response) {
-    var resultsView = document.getElementById("results");
     // var responseString = JSON.stringify(response, '', 2);
     // document.getElementById('results').innerHTML += responseString;
     for(var i = 0; i < response.items.length; i++){
-      var node = document.createElement("p");
-      var textNode = document.createTextNode(response.items[i].snippet.title );
-      node.appendChild(textNode);
-      resultsView.appendChild(node);
+      var title = response.items[i].snippet.title;
+      var videoid = response.result.items[i].id.videoId;
+      if (!!title && !!videoid) {
+        render({title: title, videoid: videoid});
+      }
     }
 }
 

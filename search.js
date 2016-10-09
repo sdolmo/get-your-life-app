@@ -1,8 +1,9 @@
 $(document).ready($.Mustache.add('string-template', '<div class="item"><h2>{{title}}</h2><iframe class="video w100" width="640" height="360" src="//www.youtube.com/embed/{{videoid}}" frameborder="0" allowfullscreen></iframe></div>'));
 
-function render(data) {
+function renderResponse(data) {
   var  tpl = $.Mustache.render("string-template", data);
   $("#results").append(tpl);
+  resetSearch()
 }
 
 function showResponse(response) {
@@ -10,13 +11,18 @@ function showResponse(response) {
       var title = response.items[i].snippet.title;
       var videoid = response.result.items[i].id.videoId;
       if (!!title && !!videoid) {
-        render({title: title, videoid: videoid});
+        renderResponse({title: title, videoid: videoid});
       }
     }
 }
 
 function onSearchResponse(response) {
-    showResponse(response);
+    if ($("#results").is(":empty")){
+      showResponse(response);
+    } else {
+      $("#results").empty();
+      showResponse(response);
+    }
 }
 
 function makeRequest() {
@@ -33,6 +39,10 @@ function makeRequest() {
       console.log('Error: ' + reason.result.error.message);
     });
   });
+}
+
+function resetSearch() {
+  $("#search").val('');
 }
 
 function init() {

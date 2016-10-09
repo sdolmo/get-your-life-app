@@ -1,9 +1,3 @@
-// function appendResults(text) {
-//   var results = document.getElementById('results');
-//   results.appendChild(document.createElement('P'));
-//   results.appendChild(document.createTextNode(text));
-// }
-
 $(document).ready($.Mustache.add('string-template', '<div class="item"><h2>{{title}}</h2><iframe class="video w100" width="640" height="360" src="//www.youtube.com/embed/{{videoid}}" frameborder="0" allowfullscreen></iframe></div>'));
 
 function render(data) {
@@ -12,8 +6,6 @@ function render(data) {
 }
 
 function showResponse(response) {
-    // var responseString = JSON.stringify(response, '', 2);
-    // document.getElementById('results').innerHTML += responseString;
     for(var i = 0; i < response.items.length; i++){
       var title = response.items[i].snippet.title;
       var videoid = response.result.items[i].id.videoId;
@@ -28,15 +20,18 @@ function onSearchResponse(response) {
 }
 
 function makeRequest() {
-  var request = gapi.client.youtube.search.list({
-    part: "snippet",
-    q: "Beyonce"
-  });
-  request.then(
-    function(response) {
-    request.execute(onSearchResponse);
-  }, function(reason) {
-    console.log('Error: ' + reason.result.error.message);
+  $("form").on("submit", function(event){
+    event.preventDefault();
+    var request = gapi.client.youtube.search.list({
+      part: "snippet",
+      q: encodeURIComponent($("#search").val()).replace(/%20/g, "+"),
+    });
+    request.then(
+      function(response) {
+      request.execute(onSearchResponse);
+    }, function(reason) {
+      console.log('Error: ' + reason.result.error.message);
+    });
   });
 }
 
